@@ -68,6 +68,7 @@ public class RubixEngine extends SurfaceView implements Runnable {
     public boolean onTouchEvent(MotionEvent event) {
         RectF pointTouched = new RectF(event.getX(), event.getY(), event.getX(), event.getY());
         if (event.getAction() == (MotionEvent.ACTION_UP & MotionEvent.ACTION_MASK)) {
+            //Start button hasn't been pressed.
             if (!rubixHUD.getStartPressed()) {
                 //If touch is on left column.
                 if (RectF.intersects(rubixHUD.getColorSelectRectF(), pointTouched)) {
@@ -81,11 +82,6 @@ public class RubixEngine extends SurfaceView implements Runnable {
                     else {
                         rubiksCube.clear();
                         rubiksCube.scrambleWhite();
-                        rubiksCube.scrambleRed();
-                        rubiksCube.scrambleBlue();
-                        rubiksCube.scrambleGreen();
-                        rubiksCube.scrambleYellow();
-                        rubiksCube.scrambleOrange();
                         rubiksCube.printDebuggingText();
                     }
                 }
@@ -109,6 +105,7 @@ public class RubixEngine extends SurfaceView implements Runnable {
                     }
                 }
             }
+
             //Start has been pressed.
             else {
                 //Touched the color selection.
@@ -120,16 +117,18 @@ public class RubixEngine extends SurfaceView implements Runnable {
                         Log.d("debug", "" + currentColor);
                     }
                 }
+
                 //Touched clear button.
                 else if (RectF.intersects(rubixHUD.getClearRect(), pointTouched)) {
                     rubiksCube.clear();
                     rubixHUD.setAllFilled(false);
+                    rubixHUD.setStartPressed(false);
                     rubiksCube.setAllFilled(false);
                 }
-                //Touching movement buttons.
+                //TOUCHING MOVEMENT BUTTONS
                 //Touched top clockwise
                 else if (RectF.intersects(rubixHUD.getTopC(), pointTouched)) {
-
+                    rubiksCube.getFaces().get(currentColor).rotateTopC();
                 }
                 //Touched top counter-clockwise
                 else if (RectF.intersects(rubixHUD.getTopCC(), pointTouched)) {
@@ -186,17 +185,5 @@ public class RubixEngine extends SurfaceView implements Runnable {
         } catch (InterruptedException e) {
             Log.d("Interrupted exception", "RubixEngine.stopThread()");
         }
-    }
-
-    public boolean getPaused() {
-        return mPaused;
-    }
-
-    public boolean getPlaying() {
-        return mPlaying;
-    }
-
-    public HUD getRubixHUD() {
-        return rubixHUD;
     }
 }

@@ -63,6 +63,133 @@ public class Face {
         blockHeight = thisHeight/3;
     }
 
+    void rotateTopC() {
+        //Rows = tile number.
+        //Columns = red, green, blue.
+        float[][] thisColors = new float[3][3];
+        float[][] parallelColors = new float[3][3];
+        float[][] rightColors = new float[3][3];
+        float[][] leftColors = new float[3][3];
+        float[][] topColors = new float[9][3];
+        int[] topColorsB = new int[9];
+        //Setting colors of non-top faces.
+        for(int i = 0; i < 3; i++) {
+            Tile parallelTile = parallel.getTiles().get(i);
+            Tile rightTile = right.getTiles().get(i);
+            Tile leftTile = left.getTiles().get(i);
+            Tile thisTile = this.tiles.get(i);
+            for(int j = 0; j < 3; j++) {
+                if(j == 0) {
+                    thisColors[i][j] = thisTile.getRed();
+                    parallelColors[i][j] = parallelTile.getRed();
+                    rightColors[i][j] = rightTile.getRed();
+                    leftColors[i][j] = leftTile.getRed();
+                }
+                else if (j == 1) {
+                    thisColors[i][j] = thisTile.getGreen();
+                    parallelColors[i][j] = parallelTile.getGreen();
+                    rightColors[i][j] = rightTile.getGreen();
+                    leftColors[i][j] = leftTile.getGreen();
+                }
+                else {
+                    thisColors[i][j] = thisTile.getBlue();
+                    parallelColors[i][j] = parallelTile.getBlue();
+                    rightColors[i][j] = rightTile.getBlue();
+                    leftColors[i][j] = leftTile.getBlue();
+                }
+            }
+        }
+        //Rotation of non-top face colors.
+        //this --> left --> parallel --> right.
+        for(int i = 0; i < 3; i++) {
+            Tile thisTile = this.tiles.get(i);
+            Tile leftTile = left.getTiles().get(i);
+            Tile parallelTile = parallel.getTiles().get(i);
+            Tile rightTile = right.getTiles().get(i);
+            float thisRed = thisColors[i][0];
+            float thisGreen = thisColors[i][1];
+            float thisBlue = thisColors[i][2];
+            int thisColor = thisTile.getThisColor();
+            float leftRed = leftColors[i][0];
+            float leftGreen = leftColors[i][1];
+            float leftBlue = leftColors[i][2];
+            int leftColor = leftTile.getThisColor();
+            float parallelRed = parallelColors[i][0];
+            float parallelGreen = parallelColors[i][1];
+            float parallelBlue = parallelColors[i][2];
+            int parallelColor = parallelTile.getThisColor();
+            float rightRed = rightColors[i][0];
+            float rightGreen = rightColors[i][1];
+            float rightBlue = rightColors[i][2];
+            int rightColor = rightTile.getThisColor();
+            leftTile.setThisColor(thisRed, thisGreen, thisBlue);
+            leftTile.setThisColor(thisColor);
+            parallelTile.setThisColor(leftRed, leftGreen, leftBlue);
+            parallelTile.setThisColor(leftColor);
+            rightTile.setThisColor(parallelRed, parallelGreen, parallelBlue);
+            rightTile.setThisColor(parallelColor);
+            thisTile.setThisColor(rightRed, rightGreen, rightBlue);
+            thisTile.setThisColor(rightColor);
+        }
+        //Top tile rotation.
+        //Setting top colors.
+        for(int i = 0; i < 9; i++) {
+            Tile topTile = top.getTiles().get(i);
+            topColorsB[i] = topTile.getThisColor();
+            for(int j = 0; j < 3; j++) {
+                if(j ==0 ) {
+                    topColors[i][j] = topTile.getRed();
+                } else if (j ==1) {
+                    topColors[i][j] = topTile.getGreen();
+                } else {
+                    topColors[i][j] = topTile.getBlue();
+                }
+            }
+        }
+        //Rotation of top face colors.
+        for (int i = 0; i < 9; i++) {
+            Tile topTile = top.getTiles().get(i);
+            switch (i) {
+                case 0:
+                    topTile.setThisColor(topColorsB[6]);
+                    topTile.setThisColor(topColors[6][0], topColors[6][1], topColors[6][2]);
+                    break;
+                case 1:
+                    topTile.setThisColor(topColorsB[3]);
+                    topTile.setThisColor(topColors[3][0], topColors[3][1], topColors[3][2]);
+                    break;
+                case 2:
+                    topTile.setThisColor(topColorsB[0]);
+                    topTile.setThisColor(topColors[0][0], topColors[0][1], topColors[0][2]);
+                    break;
+                case 3:
+                    topTile.setThisColor(topColorsB[7]);
+                    topTile.setThisColor(topColors[7][0], topColors[7][1], topColors[7][2]);
+                    break;
+                case 4:
+                    topTile.setThisColor(topColorsB[4]);
+                    topTile.setThisColor(topColors[4][0], topColors[4][1], topColors[4][2]);
+                    break;
+                case 5:
+                    topTile.setThisColor(topColorsB[1]);
+                    topTile.setThisColor(topColors[1][0], topColors[1][1], topColors[1][2]);
+                    break;
+                case 6:
+                    topTile.setThisColor(topColorsB[8]);
+                    topTile.setThisColor(topColors[8][0], topColors[8][1], topColors[8][2]);
+                    break;
+                case 7:
+                    topTile.setThisColor(topColorsB[5]);
+                    topTile.setThisColor(topColors[5][0], topColors[5][1], topColors[5][2]);
+                    break;
+                case 8:
+                    topTile.setThisColor(topColorsB[2]);
+                    topTile.setThisColor(topColors[2][0], topColors[2][1], topColors[2][2]);
+                    break;
+            }
+        }
+    }
+
     void setNeighbors(Face parallel, Face top, Face bottom, Face left, Face right) {
         this.parallel = parallel;
         this.top = top;

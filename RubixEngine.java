@@ -18,7 +18,6 @@ public class RubixEngine extends SurfaceView implements Runnable {
     private Thread rubixThread = null;
 
     private boolean mPlaying = true;
-    private boolean mPaused = false;
 
     private Canvas rubixCanvas;
     private Paint rubixPaint;
@@ -31,6 +30,8 @@ public class RubixEngine extends SurfaceView implements Runnable {
     private long nextFrameTime;
 
     private int currentColor = 0;
+
+    private int scrambleTimes = 0;
 
     public RubixEngine(Context context, DisplayMetrics displayMetrics) {
         super(context);
@@ -45,6 +46,7 @@ public class RubixEngine extends SurfaceView implements Runnable {
     public void run() {
         while (mPlaying) {
             update(this.rubiksCube, this.rubixHUD);
+            boolean mPaused = false;
             if (!mPaused && updateRequired()){
                 draw();
             }
@@ -80,9 +82,15 @@ public class RubixEngine extends SurfaceView implements Runnable {
                     }
                     //Selected scramble.
                     else {
-                        rubiksCube.clear();
-                        rubiksCube.scrambleWhite();
-                        rubiksCube.printDebuggingText();
+                        if(scrambleTimes != 6) {
+                            rubiksCube.scramble(scrambleTimes);
+                            incScrambleTimes();
+                            rubiksCube.printDebuggingText();
+                        } else {
+                            resetScrambleTimes();
+                            rubiksCube.scramble(scrambleTimes);
+                            incScrambleTimes();
+                        }
                     }
                 }
                 //Touched clear button.
@@ -90,6 +98,7 @@ public class RubixEngine extends SurfaceView implements Runnable {
                     rubiksCube.clear();
                     rubixHUD.setAllFilled(false);
                     rubiksCube.setAllFilled(false);
+                    resetScrambleTimes();
                 }
                 //Touched start button.
                 else if (RectF.intersects(rubixHUD.getStartButton(), pointTouched)) {
@@ -128,11 +137,11 @@ public class RubixEngine extends SurfaceView implements Runnable {
                 //TOUCHING MOVEMENT BUTTONS
                 //Touched top clockwise
                 else if (RectF.intersects(rubixHUD.getTopC(), pointTouched)) {
-                    rubiksCube.getFaces().get(currentColor).rotateTopC();
+                    rubiksCube.getFaces().get(currentColor).rotateTopC(currentColor);
                 }
                 //Touched top counter-clockwise
                 else if (RectF.intersects(rubixHUD.getTopCC(), pointTouched)) {
-
+                    rubiksCube.getFaces().get(currentColor).rotateTopCC(currentColor);
                 }
                 //Touched left rotate down
                 else if (RectF.intersects(rubixHUD.getLeftRotateDown(), pointTouched)) {
@@ -152,7 +161,7 @@ public class RubixEngine extends SurfaceView implements Runnable {
                 }
                 //Touched bottom clockwise.
                 else if (RectF.intersects(rubixHUD.getBottomC(), pointTouched)) {
-
+                    rubiksCube.getFaces().get(currentColor).rotateBottomC(currentColor);
                 }
                 //Touched bottom counter-clockwise.
                 else if (RectF.intersects(rubixHUD.getBottomCC(), pointTouched)) {
@@ -185,5 +194,13 @@ public class RubixEngine extends SurfaceView implements Runnable {
         } catch (InterruptedException e) {
             Log.d("Interrupted exception", "RubixEngine.stopThread()");
         }
+    }
+
+    public void incScrambleTimes() {
+        scrambleTimes++;
+    }
+
+    public void resetScrambleTimes() {
+        scrambleTimes = 0;
     }
 }

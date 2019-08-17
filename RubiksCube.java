@@ -56,18 +56,18 @@ class RubiksCube {
         orangeFace.getTiles().get(4).setThisColor(255, 165, 0);
         orangeFace.getTiles().get(4).setThisColor(5);
 
-        faces.add(whiteFace);
-        faces.add(redFace);
-        faces.add(greenFace);
-        faces.add(blueFace);
-        faces.add(yellowFace);
-        faces.add(orangeFace);
+        faces.add(whiteFace); //0
+        faces.add(redFace);   //1
+        faces.add(greenFace); //2
+        faces.add(blueFace);  //3
+        faces.add(yellowFace);//4
+        faces.add(orangeFace);//5
 
         faceHeight = greenFace.getThisHeight();
         tileHeight = greenFace.getBlockHeight();
 
-        whiteFace.setNeighbors(yellowFace, blueFace, greenFace, orangeFace, redFace);
-        redFace.setNeighbors(orangeFace, whiteFace, blueFace, greenFace, blueFace);
+        whiteFace.setNeighbors(blueFace, yellowFace, greenFace, orangeFace, redFace);
+        redFace.setNeighbors(orangeFace, whiteFace, blueFace, greenFace, yellowFace);
         greenFace.setNeighbors(yellowFace, whiteFace, blueFace, orangeFace, redFace);
         blueFace.setNeighbors(whiteFace, greenFace, yellowFace, orangeFace, redFace);
         yellowFace.setNeighbors(greenFace, whiteFace, blueFace, redFace, orangeFace);
@@ -84,15 +84,19 @@ class RubiksCube {
         greenFace.setTileRow(faceHeight+3, initDistFromLeft +faceHeight+ 30, 0);
         greenFace.setTileRow(faceHeight+tileHeight+6, initDistFromLeft+faceHeight+30, 3);
         greenFace.setTileRow(faceHeight+tileHeight*2+9, initDistFromLeft+faceHeight+30, 6);
+        //SWITCH TO YELLOW
         blueFace.setTileRow(faceHeight*2+3,initDistFromLeft+faceHeight+30,0);
         blueFace.setTileRow(faceHeight*2+tileHeight+6, initDistFromLeft+faceHeight+30, 3);
         blueFace.setTileRow(faceHeight*2+tileHeight*2+9, initDistFromLeft+faceHeight+30, 6);
+        //SWITCH TO YELLOW
         redFace.setTileRow(faceHeight+3, initDistFromLeft+faceHeight*2+40,0);
         redFace.setTileRow(faceHeight+tileHeight+6, initDistFromLeft+faceHeight*2+40,3);
         redFace.setTileRow(faceHeight+tileHeight*2+9, initDistFromLeft+faceHeight*2+40,6);
+        //SWITCH TO BLUE
         yellowFace.setTileRow(faceHeight+3,initDistFromLeft+faceHeight*3+50,0);
         yellowFace.setTileRow(faceHeight+tileHeight+6,initDistFromLeft+faceHeight*3+50,3);
         yellowFace.setTileRow(faceHeight+tileHeight*2+9,initDistFromLeft+faceHeight*3+50,6);
+        //SWITCH TO BLUE
         for (Face aFace : faces) {
             aFace.setTileBs();
         }
@@ -116,7 +120,7 @@ class RubiksCube {
         }
     }
 
-    void updateAllFilled() {
+    private void updateAllFilled() {
         if ((currentWhite0+currentOrange5+currentYellow4+currentBlue3+currentGreen2+currentRed1)==48)
             allFilled = true;
     }
@@ -259,12 +263,13 @@ class RubiksCube {
         }
     }
 
-    void scrambleWhite() {
+    void scramble(int scrambleTimes) {
         Random random = new Random();
+        Face currentFace = faces.get(scrambleTimes);
         for (int i = 0; i < 9; i++) {
             if (i == 4)
                 continue;
-            Tile tile = whiteFace.getTiles().get(i);
+            Tile tile = currentFace.getTiles().get(i);
             boolean canSetColor = false;
             float r = 0;
             float g = 0;

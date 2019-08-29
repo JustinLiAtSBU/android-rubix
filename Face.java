@@ -47,6 +47,8 @@ class Face {
     private float[][] bottomColors = new float[9][3];
     private int[] topColorsB = new int[9];
     private int[] bottomColorsB = new int[9];
+    private int[] leftColorsB = new int[9];
+    private int[] rightColorsB = new int[9];
 
     private ArrayList<Tile> tiles = new ArrayList<>();
     private ArrayList<Tile> tilebs = new ArrayList<>();
@@ -74,6 +76,400 @@ class Face {
         int screenHeight = displayMetrics.heightPixels;
         thisHeight = screenHeight /3;
         blockHeight = thisHeight/3;
+    }
+
+    void rotateRightUp(int faceNumber) {
+        getAdjacentFacesColors();
+        //Green
+        if (faceNumber == 2) {
+            int yellowIndex = 6;
+            //8 on yellow becomes 0 on the top.
+            for (int i = 2; i <= 8; i += 3) {
+                Tile thisTile = this.tiles.get(i);
+                Tile topTile = top.tiles.get(i);
+                Tile bottomTile = bottom.tiles.get(i);
+                Tile parallelTile = parallel.tiles.get(yellowIndex);
+
+                int thisTileColor = thisTile.getThisColor();
+                float thisTileRed = thisTile.getRed();
+                float thisTileGreen = thisTile.getGreen();
+                float thisTileBlue = thisTile.getBlue();
+
+                //this <-- bottom
+                thisTile.setThisColor(bottomTile.getThisColor());
+                setRGBColors(thisTile, bottomColors, i);
+                //bottom <-- parallel
+                bottomTile.setThisColor(parallelTile.getThisColor());
+                setRGBColors(bottomTile, parallelColors, yellowIndex);
+                //parallel <-- top
+                parallelTile.setThisColor(topTile.getThisColor());
+                setRGBColors(parallelTile, topColors, i);
+                //top <-- this
+                topTile.setThisColor(thisTileColor);
+                topTile.setThisColor(thisTileRed, thisTileGreen, thisTileBlue);
+                yellowIndex -= 3;
+
+                //ADD ROTATION OF LEFT FACE
+            }
+        } else if (faceNumber == 0) {
+            int yellowIndex = 6;
+            for (int i = 2; i <= 8; i += 3) {
+                Tile thisTile = this.tiles.get(i);
+                Tile topTile = top.tiles.get(yellowIndex);
+                Tile bottomTile = bottom.tiles.get(i);
+                Tile parallelTile = parallel.tiles.get(i);
+
+                int thisTileColor = thisTile.getThisColor();
+                float thisTileRed = thisTile.getRed();
+                float thisTileGreen = thisTile.getGreen();
+                float thisTileBlue = thisTile.getBlue();
+
+                //this <-- bottom
+                thisTile.setThisColor(bottomTile.getThisColor());
+                setRGBColors(thisTile, bottomColors, i);
+                //bottom <-- parallel
+                bottomTile.setThisColor(parallelTile.getThisColor());
+                setRGBColors(bottomTile, parallelColors, i);
+                //parallel <-- top
+                parallelTile.setThisColor(topTile.getThisColor());
+                setRGBColors(parallelTile, topColors, yellowIndex);
+                //top <-- this
+                topTile.setThisColor(thisTileColor);
+                topTile.setThisColor(thisTileRed, thisTileGreen, thisTileBlue);
+                yellowIndex -= 3;
+            }
+        } else if (faceNumber ==  3) {
+            int yellowIndex = 6;
+            for (int i = 2; i <= 8; i += 3) {
+                Tile thisTile = this.tiles.get(i);
+                Tile topTile = top.tiles.get(i);
+                Tile bottomTile = bottom.tiles.get(yellowIndex);
+                Tile parallelTile = parallel.tiles.get(i);
+
+                int thisTileColor = thisTile.getThisColor();
+                float thisTileRed = thisTile.getRed();
+                float thisTileGreen = thisTile.getGreen();
+                float thisTileBlue = thisTile.getBlue();
+
+                //this <-- bottom
+                thisTile.setThisColor(bottomTile.getThisColor());
+                setRGBColors(thisTile, bottomColors, yellowIndex);
+                //bottom <-- parallel
+                bottomTile.setThisColor(parallelTile.getThisColor());
+                setRGBColors(bottomTile, parallelColors, i);
+                //parallel <-- top
+                parallelTile.setThisColor(topTile.getThisColor());
+                setRGBColors(parallelTile, topColors, i);
+                //top <-- this
+                topTile.setThisColor(thisTileColor);
+                topTile.setThisColor(thisTileRed, thisTileGreen, thisTileBlue);
+
+                yellowIndex -= 3;
+            }
+        } else if (faceNumber == 1) {
+            //save thisTile's colors.
+            int[] thisPrevColors = new int[9];
+            thisPrevColors[0] = tile1.getThisColor();
+            thisPrevColors[3] = tile4.getThisColor();
+            thisPrevColors[6] = tile7.getThisColor();
+
+            //this <-- bottom
+            for (int redIndex = 2, blueIndex = 2; redIndex <= 8; redIndex += 3, blueIndex--) {
+                Tile bottomTile = bottom.tiles.get(blueIndex);
+                Tile thisTile = this.tiles.get(redIndex);
+                thisTile.setThisColor(bottomTile.getThisColor());
+                setRGBColors(thisTile, bottomColors, blueIndex);
+            }
+            //bottom <-- parallel
+            for (int orangeIndex = 6, blueIndex = 8; blueIndex >= 6; orangeIndex -= 3, blueIndex--) {
+                Tile parallelTile = parallel.tiles.get(orangeIndex);
+                Tile bottomTile = bottom.tiles.get(blueIndex);
+                bottomTile.setThisColor(parallelTile.getThisColor());
+                setRGBColors(bottomTile, parallelColors, orangeIndex);
+            }
+            //parallel <-- top
+            for (int whiteIndex = 0, orangeIndex = 6; whiteIndex <= 2; whiteIndex++, orangeIndex -= 3) {
+                Tile topTile = top.tiles.get(whiteIndex);
+                Tile parallelTile = parallel.tiles.get(orangeIndex);
+                parallelTile.setThisColor(topTile.getThisColor());
+                setRGBColors(parallelTile, topColors, whiteIndex);
+            }
+            //top <-- this
+            for (int thisIndex = 2, whiteIndex = 0; whiteIndex <= 2; thisIndex += 3, whiteIndex++) {
+                Tile topTile = top.tiles.get(whiteIndex);
+                topTile.setThisColor(thisPrevColors[thisIndex]);
+                setRGBColors(topTile, thisColors, thisIndex);
+            }
+        }
+        //yellow
+        else if (faceNumber == 4) {
+            int[] thisPrevColors = new int[9];
+            thisPrevColors[0] = this.tiles.get(0).getThisColor();
+            thisPrevColors[3] = this.tiles.get(3).getThisColor();
+            thisPrevColors[6] = this.tiles.get(6).getThisColor();
+
+            //this <-- bottom
+            for (int bottomIndex = 6, thisIndex = 2; bottomIndex >= 0; bottomIndex -= 3, thisIndex += 3) {
+                Tile bottomTile = bottom.tiles.get(bottomIndex);
+                Tile thisTile = this.tiles.get(thisIndex);
+                thisTile.setThisColor(bottomTile.getThisColor());
+                setRGBColors(thisTile, bottomColors, bottomIndex);
+            }
+            //bottom <-- parallel
+            for (int parallelIndex = 6, bottomIndex = 6; parallelIndex >= 0; parallelIndex -= 3, bottomIndex -= 3) {
+                Tile parallelTile = parallel.tiles.get(parallelIndex);
+                Tile bottomTile = bottom.tiles.get(bottomIndex);
+                bottomTile.setThisColor(parallelTile.getThisColor());
+                setRGBColors(bottomTile, parallelColors, parallelIndex);
+            }
+            //parallel <-- top
+            for (int parallelIndex = 6, topIndex = 6; topIndex >= 0; parallelIndex -= 3, topIndex -= 3) {
+                Tile parallelTile = parallel.tiles.get(parallelIndex);
+                Tile topTile = top.tiles.get(topIndex);
+                parallelTile.setThisColor(topTile.getThisColor());
+                setRGBColors(parallelTile, topColors, topIndex);
+            }
+            //top <-- this
+            for (int topIndex = 6, thisIndex = 2; thisIndex <= 8; topIndex -= 3, thisIndex += 3) {
+                Tile topTile = top.tiles.get(topIndex);
+                topTile.setThisColor(thisPrevColors[thisIndex]);
+                setRGBColors(topTile, thisColors, thisIndex);
+            }
+        }
+        //orange
+        else if (faceNumber == 5) {
+            int[] thisPrevColors = new int[9];
+            thisPrevColors[0] = this.tiles.get(0).getThisColor();
+            thisPrevColors[3] = this.tiles.get(3).getThisColor();
+            thisPrevColors[6] = this.tiles.get(6).getThisColor();
+
+            //this <-- bottom
+            for (int bottomIndex = 0, thisIndex = 2; bottomIndex <= 2; bottomIndex++, thisIndex += 3) {
+                Tile bottomTile = bottom.tiles.get(bottomIndex);
+                Tile thisTile = this.tiles.get(thisIndex);
+                thisTile.setThisColor(bottomTile.getThisColor());
+                setRGBColors(thisTile, bottomColors, bottomIndex);
+            }
+            //bottom <-- parallel
+            for (int parallelIndex = 6, bottomIndex = 0; parallelIndex >= 0; parallelIndex -= 3, bottomIndex++) {
+                Tile parallelTile = parallel.tiles.get(parallelIndex);
+                Tile bottomTile = bottom.tiles.get(bottomIndex);
+                bottomTile.setThisColor(parallelTile.getThisColor());
+                setRGBColors(bottomTile, parallelColors, parallelIndex);
+            }
+            //parallel <-- top
+            for (int parallelIndex = 6, topIndex = 8; topIndex >= 6; parallelIndex -= 3, topIndex--) {
+                Tile parallelTile = parallel.tiles.get(parallelIndex);
+                Tile topTile = top.tiles.get(topIndex);
+                parallelTile.setThisColor(topTile.getThisColor());
+                setRGBColors(parallelTile, topColors, topIndex);
+            }
+            //top <-- this
+            for (int topIndex = 8, thisIndex = 2; thisIndex <= 8; topIndex--, thisIndex += 3) {
+                Tile topTile = top.tiles.get(topIndex);
+                topTile.setThisColor(thisPrevColors[thisIndex]);
+                setRGBColors(topTile, thisColors, thisIndex);
+            }
+        }
+        faceRotationC(neighbors.get(4), 4);
+    }
+
+    void rotateRightDown(int faceNumber) {
+        getAdjacentFacesColors();
+        //Green
+        if (faceNumber == 2) {
+            int yellowIndex = 6;
+            //8 on yellow becomes 0 on the top.
+            for (int i = 2; i <= 8; i += 3) {
+                Tile thisTile = this.tiles.get(i);
+                Tile topTile = top.tiles.get(i);
+                Tile bottomTile = bottom.tiles.get(i);
+                Tile parallelTile = parallel.tiles.get(yellowIndex);
+
+                int thisTileColor = thisTile.getThisColor();
+                float thisTileRed = thisTile.getRed();
+                float thisTileGreen = thisTile.getGreen();
+                float thisTileBlue = thisTile.getBlue();
+
+                //top --> this
+                thisTile.setThisColor(topTile.getThisColor());
+                setRGBColors(thisTile, topColors, i);
+                //parallel --> top
+                topTile.setThisColor(parallelTile.getThisColor());
+                setRGBColors(topTile, parallelColors, yellowIndex);
+                //bottom --> parallel
+                parallelTile.setThisColor(bottomTile.getThisColor());
+                setRGBColors(parallelTile, bottomColors, i);
+                //this --> bottom
+                bottomTile.setThisColor(thisTileColor);
+                bottomTile.setThisColor(thisTileRed, thisTileGreen, thisTileBlue);
+
+                yellowIndex -= 3;
+            }
+        }
+        else if (faceNumber == 0) {
+            int yellowIndex = 6;
+            for (int i = 2; i <= 8; i += 3) {
+                Tile thisTile = this.tiles.get(i);
+                Tile topTile = top.tiles.get(yellowIndex);
+                Tile bottomTile = bottom.tiles.get(i);
+                Tile parallelTile = parallel.tiles.get(i);
+
+                int thisTileColor = thisTile.getThisColor();
+                float thisTileRed = thisTile.getRed();
+                float thisTileGreen = thisTile.getGreen();
+                float thisTileBlue = thisTile.getBlue();
+
+                //top --> this
+                thisTile.setThisColor(topTile.getThisColor());
+                setRGBColors(thisTile, topColors, yellowIndex);
+                //parallel --> top
+                topTile.setThisColor(parallelTile.getThisColor());
+                setRGBColors(topTile, parallelColors, i);
+                //bottom --> parallel
+                parallelTile.setThisColor(bottomTile.getThisColor());
+                setRGBColors(parallelTile, bottomColors, i);
+                //this --> bottom
+                bottomTile.setThisColor(thisTileColor);
+                bottomTile.setThisColor(thisTileRed, thisTileGreen, thisTileBlue);
+
+                yellowIndex -= 3;
+            }
+        }
+        else if (faceNumber ==  3) {
+            int yellowIndex = 6;
+            for (int i = 2; i <= 8; i += 3) {
+                Tile thisTile = this.tiles.get(i);
+                Tile topTile = top.tiles.get(i);
+                Tile bottomTile = bottom.tiles.get(yellowIndex);
+                Tile parallelTile = parallel.tiles.get(i);
+
+                int thisTileColor = thisTile.getThisColor();
+                float thisTileRed = thisTile.getRed();
+                float thisTileGreen = thisTile.getGreen();
+                float thisTileBlue = thisTile.getBlue();
+
+                //top --> this
+                thisTile.setThisColor(topTile.getThisColor());
+                setRGBColors(thisTile, topColors, i);
+                //parallel --> top
+                topTile.setThisColor(parallelTile.getThisColor());
+                setRGBColors(topTile, parallelColors, i);
+                //bottom --> parallel
+                parallelTile.setThisColor(bottomTile.getThisColor());
+                setRGBColors(parallelTile, bottomColors, yellowIndex);
+                //this --> bottom
+                bottomTile.setThisColor(thisTileColor);
+                bottomTile.setThisColor(thisTileRed, thisTileGreen, thisTileBlue);
+
+                yellowIndex -= 3;
+            }
+        } else if (faceNumber == 1) {
+            //save thisTile's colors.
+            int[] thisPrevColors = new int[9];
+            thisPrevColors[0] = tile1.getThisColor();
+            thisPrevColors[3] = tile4.getThisColor();
+            thisPrevColors[6] = tile7.getThisColor();
+
+            //top --> this
+            for (int thisIndex = 2, topIndex = 0; topIndex <= 2; thisIndex += 3, topIndex++) {
+                Tile thisTile = this.tiles.get(thisIndex);
+                Tile topTile = top.tiles.get(topIndex);
+                thisTile.setThisColor(topTile.getThisColor());
+                setRGBColors(thisTile, topColors, topIndex);
+            }
+            //parallel --> top
+            for (int topIndex = 0, parallelIndex = 6; topIndex <= 2; topIndex++, parallelIndex -= 3) {
+                Tile topTile = top.tiles.get(topIndex);
+                Tile parallelTile = parallel.tiles.get(parallelIndex);
+                topTile.setThisColor(parallelTile.getThisColor());
+                setRGBColors(topTile, parallelColors, parallelIndex);
+            }
+            //bottom --> parallel
+            for (int parallelIndex = 6, bottomIndex = 8; parallelIndex >= 0; parallelIndex -= 3, bottomIndex--) {
+                Tile parallelTile = parallel.tiles.get(parallelIndex);
+                Tile bottomTile = bottom.tiles.get(bottomIndex);
+                parallelTile.setThisColor(bottomTile.getThisColor());
+                setRGBColors(parallelTile, bottomColors, bottomIndex);
+            }
+            //this --> bottom
+            for (int thisIndex = 2, bottomIndex = 8; thisIndex <= 8; thisIndex += 3, bottomIndex--) {
+                Tile bottomTile = bottom.tiles.get(bottomIndex);
+                bottomTile.setThisColor(thisPrevColors[thisIndex]);
+                setRGBColors(bottomTile, thisColors, thisIndex);
+            }
+        }
+        //yellow
+        else if (faceNumber == 4) {
+            int[] thisPrevColors = new int[9];
+            thisPrevColors[0] = this.tiles.get(0).getThisColor();
+            thisPrevColors[3] = this.tiles.get(3).getThisColor();
+            thisPrevColors[6] = this.tiles.get(6).getThisColor();
+
+            //top --> this
+            for (int topIndex = 6, thisIndex = 2; thisIndex <= 8; topIndex -= 3, thisIndex += 3) {
+                Tile topTile = top.tiles.get(topIndex);
+                Tile thisTile = this.tiles.get(thisIndex);
+                thisTile.setThisColor(topTile.getThisColor());
+                setRGBColors(thisTile, topColors, topIndex);
+            }
+            //parallel --> top
+            for (int parallelIndex = 6, topIndex = 6; topIndex >= 0; parallelIndex -= 3, topIndex -= 3) {
+                Tile parallelTile = parallel.tiles.get(parallelIndex);
+                Tile topTile = top.tiles.get(topIndex);
+                topTile.setThisColor(parallelTile.getThisColor());
+                setRGBColors(topTile, parallelColors, parallelIndex);
+            }
+            //bottom --> parallel
+            for (int parallelIndex = 6, bottomIndex = 6; parallelIndex >= 0; parallelIndex -= 3, bottomIndex -= 3) {
+                Tile parallelTile = parallel.tiles.get(parallelIndex);
+                Tile bottomTile = bottom.tiles.get(bottomIndex);
+                parallelTile.setThisColor(bottomTile.getThisColor());
+                setRGBColors(parallelTile, bottomColors, bottomIndex);
+            }
+            //this --> bottom
+            for (int bottomIndex = 6, thisIndex = 2; bottomIndex >= 0; bottomIndex -= 3, thisIndex += 3) {
+                Tile bottomTile = bottom.tiles.get(bottomIndex);
+                bottomTile.setThisColor(thisPrevColors[thisIndex]);
+                setRGBColors(bottomTile, thisColors, thisIndex);
+            }
+        }
+        //orange
+        else if (faceNumber == 5) {
+            int[] thisPrevColors = new int[9];
+            thisPrevColors[0] = this.tiles.get(0).getThisColor();
+            thisPrevColors[3] = this.tiles.get(3).getThisColor();
+            thisPrevColors[6] = this.tiles.get(6).getThisColor();
+
+            //top --> this
+            for (int topIndex = 8, thisIndex = 2; thisIndex <= 8; topIndex--, thisIndex += 3) {
+                Tile topTile = top.tiles.get(topIndex);
+                Tile thisTile = this.tiles.get(thisIndex);
+                thisTile.setThisColor(topTile.getThisColor());
+                setRGBColors(thisTile, topColors, topIndex);
+            }
+            //parallel --> top
+            for (int parallelIndex = 6, topIndex = 8; topIndex >= 6; parallelIndex -= 3, topIndex--) {
+                Tile parallelTile = parallel.tiles.get(parallelIndex);
+                Tile topTile = top.tiles.get(topIndex);
+                topTile.setThisColor(parallelTile.getThisColor());
+                setRGBColors(topTile, parallelColors, parallelIndex);
+            }
+            //bottom --> parallel
+            for (int parallelIndex = 6, bottomIndex = 0; parallelIndex >= 0; parallelIndex -= 3, bottomIndex++) {
+                Tile parallelTile = parallel.tiles.get(parallelIndex);
+                Tile bottomTile = bottom.tiles.get(bottomIndex);
+                parallelTile.setThisColor(bottomTile.getThisColor());
+                setRGBColors(parallelTile, bottomColors, bottomIndex);
+            }
+            //this --> bottom
+            for (int bottomIndex = 0, thisIndex = 2; bottomIndex <= 2; bottomIndex++, thisIndex += 3) {
+                Tile bottomTile = bottom.tiles.get(bottomIndex);
+                bottomTile.setThisColor(thisPrevColors[thisIndex]);
+                setRGBColors(bottomTile, thisColors, thisIndex);
+            }
+        }
+        faceRotationCC(neighbors.get(4), 4);
     }
 
     void rotateLeftUp(int faceNumber) {
@@ -194,7 +590,6 @@ class Face {
             }
             //top <-- this
             for (int i = 0, j = 6; j < 9; i += 3, j++) {
-                Tile thisTile = this.tiles.get(i);
                 Tile topTile = top.tiles.get(j);
                 topTile.setThisColor(thisPrevColors[i]);
                 setRGBColors(topTile, thisColors, i);
@@ -266,11 +661,11 @@ class Face {
             //top <-- this
             for (int topIndex = 2, thisIndex = 0; thisIndex <= 6; topIndex--, thisIndex += 3) {
                 Tile topTile = top.tiles.get(topIndex);
-                Tile thisTile = this.tiles.get(thisIndex);
                 topTile.setThisColor(thisPrevColors[thisIndex]);
                 setRGBColors(topTile, thisColors, thisIndex);
             }
         }
+        faceRotationCC(neighbors.get(3), 3);
     }
 
     void rotateLeftDown(int faceNumber) {
@@ -468,7 +863,7 @@ class Face {
                 setRGBColors(bottomTile, thisColors, thisIndex);
             }
         }
-        //ADD ROTATION
+        faceRotationC(neighbors.get(3), 3);
     }
     void rotateBottomC(int faceNumber) {
         getAdjacentFacesColors();
@@ -584,7 +979,6 @@ class Face {
         if (faceNumber == 0) {
             //this <-- left
             for (int leftIndex = 8, thisIndex = 6; leftIndex >= 2; leftIndex -= 3, thisIndex++) {
-                Tile leftTile = left.tiles.get(leftIndex);
                 Tile thisTile = this.tiles.get(thisIndex);
                 thisTile.setThisColor(thisPrevColors[thisIndex]);
                 setRGBColors(thisTile, leftColors, leftIndex);
@@ -605,7 +999,6 @@ class Face {
             }
             //right <-- this
             for(int thisIndex = 6, rightIndex = 0; thisIndex < 9; thisIndex++, rightIndex += 3) {
-                Tile thisTile = this.tiles.get(thisIndex);
                 Tile rightTile = right.tiles.get(rightIndex);
                 rightTile.setThisColor(thisPrevColors[thisIndex]);
                 setRGBColors(rightTile, thisColors, thisIndex);
@@ -636,7 +1029,6 @@ class Face {
             }
             //right <-- this
             for (int thisIndex = 6, rightIndex = 8; thisIndex < 9 ; thisIndex++, rightIndex -= 3) {
-                Tile thisTile = this.tiles.get(thisIndex);
                 Tile rightTile = right.getTiles().get(rightIndex);
                 rightTile.setThisColor(thisPrevColors[thisIndex]);
                 setRGBColors(rightTile, thisColors, thisIndex);
@@ -936,191 +1328,337 @@ class Face {
 
     private void faceRotationCC(Face face, int side) {
         for (int i = 0; i < 9; i++) {
-            Tile topTile = face.getTiles().get(i);
+            Tile chosenTile = face.getTiles().get(i);
             switch (side) {
                 case 1:
                     switch (i) {
                         case 8:
-                            topTile.setThisColor(topColorsB[6]);
-                            topTile.setThisColor(topColors[6][0], topColors[6][1], topColors[6][2]);
+                            chosenTile.setThisColor(topColorsB[6]);
+                            chosenTile.setThisColor(topColors[6][0], topColors[6][1], topColors[6][2]);
                             break;
                         case 7:
-                            topTile.setThisColor(topColorsB[3]);
-                            topTile.setThisColor(topColors[3][0], topColors[3][1], topColors[3][2]);
+                            chosenTile.setThisColor(topColorsB[3]);
+                            chosenTile.setThisColor(topColors[3][0], topColors[3][1], topColors[3][2]);
                             break;
                         case 6:
-                            topTile.setThisColor(topColorsB[0]);
-                            topTile.setThisColor(topColors[0][0], topColors[0][1], topColors[0][2]);
+                            chosenTile.setThisColor(topColorsB[0]);
+                            chosenTile.setThisColor(topColors[0][0], topColors[0][1], topColors[0][2]);
                             break;
                         case 5:
-                            topTile.setThisColor(topColorsB[7]);
-                            topTile.setThisColor(topColors[7][0], topColors[7][1], topColors[7][2]);
+                            chosenTile.setThisColor(topColorsB[7]);
+                            chosenTile.setThisColor(topColors[7][0], topColors[7][1], topColors[7][2]);
                             break;
                         case 4:
-                            topTile.setThisColor(topColorsB[4]);
-                            topTile.setThisColor(topColors[4][0], topColors[4][1], topColors[4][2]);
+                            chosenTile.setThisColor(topColorsB[4]);
+                            chosenTile.setThisColor(topColors[4][0], topColors[4][1], topColors[4][2]);
                             break;
                         case 3:
-                            topTile.setThisColor(topColorsB[1]);
-                            topTile.setThisColor(topColors[1][0], topColors[1][1], topColors[1][2]);
+                            chosenTile.setThisColor(topColorsB[1]);
+                            chosenTile.setThisColor(topColors[1][0], topColors[1][1], topColors[1][2]);
                             break;
                         case 2:
-                            topTile.setThisColor(topColorsB[8]);
-                            topTile.setThisColor(topColors[8][0], topColors[8][1], topColors[8][2]);
+                            chosenTile.setThisColor(topColorsB[8]);
+                            chosenTile.setThisColor(topColors[8][0], topColors[8][1], topColors[8][2]);
                             break;
                         case 1:
-                            topTile.setThisColor(topColorsB[5]);
-                            topTile.setThisColor(topColors[5][0], topColors[5][1], topColors[5][2]);
+                            chosenTile.setThisColor(topColorsB[5]);
+                            chosenTile.setThisColor(topColors[5][0], topColors[5][1], topColors[5][2]);
                             break;
                         case 0:
-                            topTile.setThisColor(topColorsB[2]);
-                            topTile.setThisColor(topColors[2][0], topColors[2][1], topColors[2][2]);
+                            chosenTile.setThisColor(topColorsB[2]);
+                            chosenTile.setThisColor(topColors[2][0], topColors[2][1], topColors[2][2]);
                             break;
                     }
                     break;
                 case 2:
                     switch (i) {
                         case 8:
-                            topTile.setThisColor(bottomColorsB[6]);
-                            topTile.setThisColor(bottomColors[6][0], bottomColors[6][1], bottomColors[6][2]);
+                            chosenTile.setThisColor(bottomColorsB[6]);
+                            chosenTile.setThisColor(bottomColors[6][0], bottomColors[6][1], bottomColors[6][2]);
                             break;
                         case 7:
-                            topTile.setThisColor(bottomColorsB[3]);
-                            topTile.setThisColor(bottomColors[3][0], bottomColors[3][1], bottomColors[3][2]);
+                            chosenTile.setThisColor(bottomColorsB[3]);
+                            chosenTile.setThisColor(bottomColors[3][0], bottomColors[3][1], bottomColors[3][2]);
                             break;
                         case 6:
-                            topTile.setThisColor(bottomColorsB[0]);
-                            topTile.setThisColor(bottomColors[0][0], bottomColors[0][1], bottomColors[0][2]);
+                            chosenTile.setThisColor(bottomColorsB[0]);
+                            chosenTile.setThisColor(bottomColors[0][0], bottomColors[0][1], bottomColors[0][2]);
                             break;
                         case 5:
-                            topTile.setThisColor(bottomColorsB[7]);
-                            topTile.setThisColor(bottomColors[7][0], bottomColors[7][1], bottomColors[7][2]);
+                            chosenTile.setThisColor(bottomColorsB[7]);
+                            chosenTile.setThisColor(bottomColors[7][0], bottomColors[7][1], bottomColors[7][2]);
                             break;
                         case 4:
-                            topTile.setThisColor(bottomColorsB[4]);
-                            topTile.setThisColor(bottomColors[4][0], bottomColors[4][1], bottomColors[4][2]);
+                            chosenTile.setThisColor(bottomColorsB[4]);
+                            chosenTile.setThisColor(bottomColors[4][0], bottomColors[4][1], bottomColors[4][2]);
                             break;
                         case 3:
-                            topTile.setThisColor(bottomColorsB[1]);
-                            topTile.setThisColor(bottomColors[1][0], bottomColors[1][1], bottomColors[1][2]);
+                            chosenTile.setThisColor(bottomColorsB[1]);
+                            chosenTile.setThisColor(bottomColors[1][0], bottomColors[1][1], bottomColors[1][2]);
                             break;
                         case 2:
-                            topTile.setThisColor(bottomColorsB[8]);
-                            topTile.setThisColor(bottomColors[8][0], bottomColors[8][1], bottomColors[8][2]);
+                            chosenTile.setThisColor(bottomColorsB[8]);
+                            chosenTile.setThisColor(bottomColors[8][0], bottomColors[8][1], bottomColors[8][2]);
                             break;
                         case 1:
-                            topTile.setThisColor(bottomColorsB[5]);
-                            topTile.setThisColor(bottomColors[5][0], bottomColors[5][1], bottomColors[5][2]);
+                            chosenTile.setThisColor(bottomColorsB[5]);
+                            chosenTile.setThisColor(bottomColors[5][0], bottomColors[5][1], bottomColors[5][2]);
                             break;
                         case 0:
-                            topTile.setThisColor(bottomColorsB[2]);
-                            topTile.setThisColor(bottomColors[2][0], bottomColors[2][1], bottomColors[2][2]);
+                            chosenTile.setThisColor(bottomColorsB[2]);
+                            chosenTile.setThisColor(bottomColors[2][0], bottomColors[2][1], bottomColors[2][2]);
                             break;
                     }
-
+                    break;
+                case 3:
+                    switch (i) {
+                        case 8:
+                            chosenTile.setThisColor(leftColorsB[6]);
+                            chosenTile.setThisColor(leftColors[6][0], leftColors[6][1], leftColors[6][2]);
+                            break;
+                        case 7:
+                            chosenTile.setThisColor(leftColorsB[3]);
+                            chosenTile.setThisColor(leftColors[3][0], leftColors[3][1], leftColors[3][2]);
+                            break;
+                        case 6:
+                            chosenTile.setThisColor(leftColorsB[0]);
+                            chosenTile.setThisColor(leftColors[0][0], leftColors[0][1], leftColors[0][2]);
+                            break;
+                        case 5:
+                            chosenTile.setThisColor(leftColorsB[7]);
+                            chosenTile.setThisColor(leftColors[7][0], leftColors[7][1], leftColors[7][2]);
+                            break;
+                        case 4:
+                            chosenTile.setThisColor(leftColorsB[4]);
+                            chosenTile.setThisColor(leftColors[4][0], leftColors[4][1], leftColors[4][2]);
+                            break;
+                        case 3:
+                            chosenTile.setThisColor(leftColorsB[1]);
+                            chosenTile.setThisColor(leftColors[1][0], leftColors[1][1], leftColors[1][2]);
+                            break;
+                        case 2:
+                            chosenTile.setThisColor(leftColorsB[8]);
+                            chosenTile.setThisColor(leftColors[8][0], leftColors[8][1], leftColors[8][2]);
+                            break;
+                        case 1:
+                            chosenTile.setThisColor(leftColorsB[5]);
+                            chosenTile.setThisColor(leftColors[5][0], leftColors[5][1], leftColors[5][2]);
+                            break;
+                        case 0:
+                            chosenTile.setThisColor(leftColorsB[2]);
+                            chosenTile.setThisColor(leftColors[2][0], leftColors[2][1], leftColors[2][2]);
+                            break;
+                    }
+                    break;
+                case 4:
+                    switch (i) {
+                        case 8:
+                            chosenTile.setThisColor(rightColorsB[6]);
+                            chosenTile.setThisColor(rightColors[6][0], rightColors[6][1], rightColors[6][2]);
+                            break;
+                        case 7:
+                            chosenTile.setThisColor(rightColorsB[3]);
+                            chosenTile.setThisColor(rightColors[3][0], rightColors[3][1], rightColors[3][2]);
+                            break;
+                        case 6:
+                            chosenTile.setThisColor(rightColorsB[0]);
+                            chosenTile.setThisColor(rightColors[0][0], rightColors[0][1], rightColors[0][2]);
+                            break;
+                        case 5:
+                            chosenTile.setThisColor(rightColorsB[7]);
+                            chosenTile.setThisColor(rightColors[7][0], rightColors[7][1], rightColors[7][2]);
+                            break;
+                        case 4:
+                            chosenTile.setThisColor(rightColorsB[4]);
+                            chosenTile.setThisColor(rightColors[4][0], rightColors[4][1], rightColors[4][2]);
+                            break;
+                        case 3:
+                            chosenTile.setThisColor(rightColorsB[1]);
+                            chosenTile.setThisColor(rightColors[1][0], rightColors[1][1], rightColors[1][2]);
+                            break;
+                        case 2:
+                            chosenTile.setThisColor(rightColorsB[8]);
+                            chosenTile.setThisColor(rightColors[8][0], rightColors[8][1], rightColors[8][2]);
+                            break;
+                        case 1:
+                            chosenTile.setThisColor(rightColorsB[5]);
+                            chosenTile.setThisColor(rightColors[5][0], rightColors[5][1], rightColors[5][2]);
+                            break;
+                        case 0:
+                            chosenTile.setThisColor(rightColorsB[2]);
+                            chosenTile.setThisColor(rightColors[2][0], rightColors[2][1], rightColors[2][2]);
+                            break;
+                    }
+                    break;
             }
         }
     }
 
     private void faceRotationC(Face face, int side) {
         for (int i = 0; i < 9; i++) {
-            Tile topTile = face.getTiles().get(i);
+            Tile chosenTile = face.getTiles().get(i);
             switch (side) {
                 case 1:
                     switch (i) {
                         case 0:
-                            topTile.setThisColor(topColorsB[6]);
-                            topTile.setThisColor(topColors[6][0], topColors[6][1], topColors[6][2]);
+                            chosenTile.setThisColor(topColorsB[6]);
+                            chosenTile.setThisColor(topColors[6][0], topColors[6][1], topColors[6][2]);
                             break;
                         case 1:
-                            topTile.setThisColor(topColorsB[3]);
-                            topTile.setThisColor(topColors[3][0], topColors[3][1], topColors[3][2]);
+                            chosenTile.setThisColor(topColorsB[3]);
+                            chosenTile.setThisColor(topColors[3][0], topColors[3][1], topColors[3][2]);
                             break;
                         case 2:
-                            topTile.setThisColor(topColorsB[0]);
-                            topTile.setThisColor(topColors[0][0], topColors[0][1], topColors[0][2]);
+                            chosenTile.setThisColor(topColorsB[0]);
+                            chosenTile.setThisColor(topColors[0][0], topColors[0][1], topColors[0][2]);
                             break;
                         case 3:
-                            topTile.setThisColor(topColorsB[7]);
-                            topTile.setThisColor(topColors[7][0], topColors[7][1], topColors[7][2]);
+                            chosenTile.setThisColor(topColorsB[7]);
+                            chosenTile.setThisColor(topColors[7][0], topColors[7][1], topColors[7][2]);
                             break;
                         case 4:
-                            topTile.setThisColor(topColorsB[4]);
-                            topTile.setThisColor(topColors[4][0], topColors[4][1], topColors[4][2]);
+                            chosenTile.setThisColor(topColorsB[4]);
+                            chosenTile.setThisColor(topColors[4][0], topColors[4][1], topColors[4][2]);
                             break;
                         case 5:
-                            topTile.setThisColor(topColorsB[1]);
-                            topTile.setThisColor(topColors[1][0], topColors[1][1], topColors[1][2]);
+                            chosenTile.setThisColor(topColorsB[1]);
+                            chosenTile.setThisColor(topColors[1][0], topColors[1][1], topColors[1][2]);
                             break;
                         case 6:
-                            topTile.setThisColor(topColorsB[8]);
-                            topTile.setThisColor(topColors[8][0], topColors[8][1], topColors[8][2]);
+                            chosenTile.setThisColor(topColorsB[8]);
+                            chosenTile.setThisColor(topColors[8][0], topColors[8][1], topColors[8][2]);
                             break;
                         case 7:
-                            topTile.setThisColor(topColorsB[5]);
-                            topTile.setThisColor(topColors[5][0], topColors[5][1], topColors[5][2]);
+                            chosenTile.setThisColor(topColorsB[5]);
+                            chosenTile.setThisColor(topColors[5][0], topColors[5][1], topColors[5][2]);
                             break;
                         case 8:
-                            topTile.setThisColor(topColorsB[2]);
-                            topTile.setThisColor(topColors[2][0], topColors[2][1], topColors[2][2]);
+                            chosenTile.setThisColor(topColorsB[2]);
+                            chosenTile.setThisColor(topColors[2][0], topColors[2][1], topColors[2][2]);
                             break;
                     }
                     break;
                 case 2:
                     switch (i) {
                         case 0:
-                            topTile.setThisColor(bottomColorsB[6]);
-                            topTile.setThisColor(bottomColors[6][0], bottomColors[6][1], bottomColors[6][2]);
+                            chosenTile.setThisColor(bottomColorsB[6]);
+                            chosenTile.setThisColor(bottomColors[6][0], bottomColors[6][1], bottomColors[6][2]);
                             break;
                         case 1:
-                            topTile.setThisColor(bottomColorsB[3]);
-                            topTile.setThisColor(bottomColors[3][0], bottomColors[3][1], bottomColors[3][2]);
+                            chosenTile.setThisColor(bottomColorsB[3]);
+                            chosenTile.setThisColor(bottomColors[3][0], bottomColors[3][1], bottomColors[3][2]);
                             break;
                         case 2:
-                            topTile.setThisColor(bottomColorsB[0]);
-                            topTile.setThisColor(bottomColors[0][0], bottomColors[0][1], bottomColors[0][2]);
+                            chosenTile.setThisColor(bottomColorsB[0]);
+                            chosenTile.setThisColor(bottomColors[0][0], bottomColors[0][1], bottomColors[0][2]);
                             break;
                         case 3:
-                            topTile.setThisColor(bottomColorsB[7]);
-                            topTile.setThisColor(bottomColors[7][0], bottomColors[7][1], bottomColors[7][2]);
+                            chosenTile.setThisColor(bottomColorsB[7]);
+                            chosenTile.setThisColor(bottomColors[7][0], bottomColors[7][1], bottomColors[7][2]);
                             break;
                         case 4:
-                            topTile.setThisColor(bottomColorsB[4]);
-                            topTile.setThisColor(bottomColors[4][0], bottomColors[4][1], bottomColors[4][2]);
+                            chosenTile.setThisColor(bottomColorsB[4]);
+                            chosenTile.setThisColor(bottomColors[4][0], bottomColors[4][1], bottomColors[4][2]);
                             break;
                         case 5:
-                            topTile.setThisColor(bottomColorsB[1]);
-                            topTile.setThisColor(bottomColors[1][0], bottomColors[1][1], bottomColors[1][2]);
+                            chosenTile.setThisColor(bottomColorsB[1]);
+                            chosenTile.setThisColor(bottomColors[1][0], bottomColors[1][1], bottomColors[1][2]);
                             break;
                         case 6:
-                            topTile.setThisColor(bottomColorsB[8]);
-                            topTile.setThisColor(bottomColors[8][0], bottomColors[8][1], bottomColors[8][2]);
+                            chosenTile.setThisColor(bottomColorsB[8]);
+                            chosenTile.setThisColor(bottomColors[8][0], bottomColors[8][1], bottomColors[8][2]);
                             break;
                         case 7:
-                            topTile.setThisColor(bottomColorsB[5]);
-                            topTile.setThisColor(bottomColors[5][0], bottomColors[5][1], bottomColors[5][2]);
+                            chosenTile.setThisColor(bottomColorsB[5]);
+                            chosenTile.setThisColor(bottomColors[5][0], bottomColors[5][1], bottomColors[5][2]);
                             break;
                         case 8:
-                            topTile.setThisColor(bottomColorsB[2]);
-                            topTile.setThisColor(bottomColors[2][0], bottomColors[2][1], bottomColors[2][2]);
+                            chosenTile.setThisColor(bottomColorsB[2]);
+                            chosenTile.setThisColor(bottomColors[2][0], bottomColors[2][1], bottomColors[2][2]);
                             break;
                     }
                     break;
                 case 3:
                     switch (i) {
                         case 0:
+                            chosenTile.setThisColor(leftColorsB[6]);
+                            chosenTile.setThisColor(leftColors[6][0], leftColors[6][1], leftColors[6][2]);
+                            break;
                         case 1:
+                            chosenTile.setThisColor(leftColorsB[3]);
+                            chosenTile.setThisColor(leftColors[3][0], leftColors[3][1], leftColors[3][2]);
+                            break;
                         case 2:
+                            chosenTile.setThisColor(leftColorsB[0]);
+                            chosenTile.setThisColor(leftColors[0][0], leftColors[0][1], leftColors[0][2]);
+                            break;
                         case 3:
+                            chosenTile.setThisColor(leftColorsB[7]);
+                            chosenTile.setThisColor(leftColors[7][0], leftColors[7][1], leftColors[7][2]);
+                            break;
                         case 4:
+                            chosenTile.setThisColor(leftColorsB[4]);
+                            chosenTile.setThisColor(leftColors[4][0], leftColors[4][1], leftColors[4][2]);
+                            break;
                         case 5:
+                            chosenTile.setThisColor(leftColorsB[1]);
+                            chosenTile.setThisColor(leftColors[1][0], leftColors[1][1], leftColors[1][2]);
+                            break;
                         case 6:
+                            chosenTile.setThisColor(leftColorsB[8]);
+                            chosenTile.setThisColor(leftColors[8][0], leftColors[8][1], leftColors[8][2]);
+                            break;
                         case 7:
+                            chosenTile.setThisColor(leftColorsB[5]);
+                            chosenTile.setThisColor(leftColors[5][0], leftColors[5][1], leftColors[5][2]);
+                            break;
                         case 8:
+                            chosenTile.setThisColor(leftColorsB[2]);
+                            chosenTile.setThisColor(leftColors[2][0], leftColors[2][1], leftColors[2][2]);
+                            break;
+                    }
+                    break;
+                case 4:
+                    switch (i) {
+                        case 0:
+                            chosenTile.setThisColor(rightColorsB[6]);
+                            chosenTile.setThisColor(rightColors[6][0], rightColors[6][1], rightColors[6][2]);
+                            break;
+                        case 1:
+                            chosenTile.setThisColor(rightColorsB[3]);
+                            chosenTile.setThisColor(rightColors[3][0], rightColors[3][1], rightColors[3][2]);
+                            break;
+                        case 2:
+                            chosenTile.setThisColor(rightColorsB[0]);
+                            chosenTile.setThisColor(rightColors[0][0], rightColors[0][1], rightColors[0][2]);
+                            break;
+                        case 3:
+                            chosenTile.setThisColor(rightColorsB[7]);
+                            chosenTile.setThisColor(rightColors[7][0], rightColors[7][1], rightColors[7][2]);
+                            break;
+                        case 4:
+                            chosenTile.setThisColor(rightColorsB[4]);
+                            chosenTile.setThisColor(rightColors[4][0], rightColors[4][1], rightColors[4][2]);
+                            break;
+                        case 5:
+                            chosenTile.setThisColor(rightColorsB[1]);
+                            chosenTile.setThisColor(rightColors[1][0], rightColors[1][1], rightColors[1][2]);
+                            break;
+                        case 6:
+                            chosenTile.setThisColor(rightColorsB[8]);
+                            chosenTile.setThisColor(rightColors[8][0], rightColors[8][1], rightColors[8][2]);
+                            break;
+                        case 7:
+                            chosenTile.setThisColor(rightColorsB[5]);
+                            chosenTile.setThisColor(rightColors[5][0], rightColors[5][1], rightColors[5][2]);
+                            break;
+                        case 8:
+                            chosenTile.setThisColor(rightColorsB[2]);
+                            chosenTile.setThisColor(rightColors[2][0], rightColors[2][1], rightColors[2][2]);
+                            break;
                     }
                     break;
             }
-
         }
     }
 
@@ -1155,8 +1693,13 @@ class Face {
         for(int i = 0; i < 9; i++) {
             Tile topTile = top.getTiles().get(i);
             Tile bottomTile = bottom.getTiles().get(i);
+            Tile leftTile = left.tiles.get(i);
+            Tile rightTile = right.tiles.get(i);
             topColorsB[i] = topTile.getThisColor();
             bottomColorsB[i] = bottomTile.getThisColor();
+            leftColorsB[i] = leftTile.getThisColor();
+            rightColorsB[i] = rightTile.getThisColor();
+
             for(int j = 0; j < 3; j++) {
                 if(j ==0 ) {
                     topColors[i][j] = topTile.getRed();

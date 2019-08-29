@@ -101,7 +101,7 @@ public class RubixEngine extends SurfaceView implements Runnable {
                     resetScrambleTimes();
                 }
                 //Touched start button.
-                else if (RectF.intersects(rubixHUD.getStartButton(), pointTouched)) {
+                else if (RectF.intersects(rubixHUD.getStartButton(), pointTouched) && rubixHUD.getAllFilled()) {
                     rubixHUD.setStartPressed(true);
                     Log.d("debug", "start pressed: " + "" + rubixHUD.getStartPressed());
                 }
@@ -145,19 +145,19 @@ public class RubixEngine extends SurfaceView implements Runnable {
                 }
                 //Touched left rotate down
                 else if (RectF.intersects(rubixHUD.getLeftRotateDown(), pointTouched)) {
-
+                    rubiksCube.getFaces().get(currentColor).rotateLeftDown(currentColor);
                 }
                 //Touched left rotate up
                 else if (RectF.intersects(rubixHUD.getLeftRotateUp(), pointTouched)) {
-
+                    rubiksCube.getFaces().get(currentColor).rotateLeftUp(currentColor);
                 }
                 //Touched right rotate down.
                 else if (RectF.intersects(rubixHUD.getRightRotateDown(), pointTouched)) {
-
+                    rubiksCube.getFaces().get(currentColor).rotateRightDown(currentColor);
                 }
                 //Touched right rotate up.
                 else if (RectF.intersects(rubixHUD.getRightRotateUp(), pointTouched)) {
-
+                    rubiksCube.getFaces().get(currentColor).rotateRightUp(currentColor);
                 }
                 //Touched bottom clockwise.
                 else if (RectF.intersects(rubixHUD.getBottomC(), pointTouched)) {
@@ -165,7 +165,7 @@ public class RubixEngine extends SurfaceView implements Runnable {
                 }
                 //Touched bottom counter-clockwise.
                 else if (RectF.intersects(rubixHUD.getBottomCC(), pointTouched)) {
-
+                    rubiksCube.getFaces().get(currentColor).rotateBottomCC(currentColor);
                 }
             }
         }

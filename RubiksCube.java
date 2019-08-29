@@ -130,7 +130,7 @@ class RubiksCube {
     }
 
     boolean getAllFilled() {
-        return allFilled;
+        return ((currentWhite0+currentOrange5+currentYellow4+currentBlue3+currentGreen2+currentRed1)==48);
     }
 
     void setAllFilled(boolean b) {

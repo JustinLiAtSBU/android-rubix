@@ -2,8 +2,6 @@ package com.example.rubix;
 
 import android.graphics.RectF;
 import android.util.DisplayMetrics;
-import android.util.Log;
-
 import java.util.ArrayList;
 
 class Face {
@@ -26,16 +24,6 @@ class Face {
     private Tile tile7 = new Tile(6);
     private Tile tile8 = new Tile(7);
     private Tile tile9 = new Tile(8);
-
-    private Tile tile1b = new Tile(0);
-    private Tile tile2b = new Tile(1);
-    private Tile tile3b = new Tile(2);
-    private Tile tile4b = new Tile(3);
-    private Tile tile5b = new Tile(4);
-    private Tile tile6b = new Tile(5);
-    private Tile tile7b = new Tile(6);
-    private Tile tile8b = new Tile(7);
-    private Tile tile9b = new Tile(8);
 
     //Rows = tile number.
     //Columns = red, green, blue.
@@ -64,14 +52,23 @@ class Face {
         tiles.add(tile7);
         tiles.add(tile8);
         tiles.add(tile9);
+        Tile tile1b = new Tile(0);
         tilebs.add(tile1b);
+        Tile tile2b = new Tile(1);
         tilebs.add(tile2b);
+        Tile tile3b = new Tile(2);
         tilebs.add(tile3b);
+        Tile tile4b = new Tile(3);
         tilebs.add(tile4b);
+        Tile tile5b = new Tile(4);
         tilebs.add(tile5b);
+        Tile tile6b = new Tile(5);
         tilebs.add(tile6b);
+        Tile tile7b = new Tile(6);
         tilebs.add(tile7b);
+        Tile tile8b = new Tile(7);
         tilebs.add(tile8b);
+        Tile tile9b = new Tile(8);
         tilebs.add(tile9b);
         int screenHeight = displayMetrics.heightPixels;
         thisHeight = screenHeight /3;
@@ -108,8 +105,6 @@ class Face {
                 topTile.setThisColor(thisTileColor);
                 topTile.setThisColor(thisTileRed, thisTileGreen, thisTileBlue);
                 yellowIndex -= 3;
-
-                //ADD ROTATION OF LEFT FACE
             }
         } else if (faceNumber == 0) {
             int yellowIndex = 6;
@@ -174,7 +169,7 @@ class Face {
             thisPrevColors[6] = tile7.getThisColor();
 
             //this <-- bottom
-            for (int redIndex = 2, blueIndex = 8; redIndex <= 8; redIndex += 3, blueIndex--) {
+            for (int redIndex = 2, blueIndex = 2; redIndex <= 8; redIndex += 3, blueIndex--) {
                 Tile bottomTile = bottom.tiles.get(blueIndex);
                 Tile thisTile = this.tiles.get(redIndex);
                 thisTile.setThisColor(bottomTile.getThisColor());

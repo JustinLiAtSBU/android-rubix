@@ -1,6 +1,8 @@
 package com.example.rubix;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -8,10 +10,10 @@ import android.graphics.RectF;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 
-public class HUD {
+class HUD {
 
-    int screenHeight;
-    int screenWidth;
+    private int screenHeight;
+    private int screenWidth;
 
     private int colorSelectWidth;
     private int faceWidth;
@@ -39,7 +41,14 @@ public class HUD {
     private boolean allFilled = false;
     private boolean startPressed = false;
 
-    private int rectFSMaxIndex = 8;
+    private Bitmap topCBitmap;
+    private Bitmap topCCBitmap;
+    private Bitmap bottomCBitmap;
+    private Bitmap bottomCCBitmap;
+    private Bitmap rightUpBitmap;
+    private Bitmap rightDownBitmap;
+    private Bitmap leftUpBitmap;
+    private Bitmap leftDownBitmap;
 
     HUD (Context context, DisplayMetrics displayMetrics) {
         screenHeight = displayMetrics.heightPixels;
@@ -49,8 +58,8 @@ public class HUD {
         whiteRect = new RectF(0, 5, colorSelectWidth, colorSelectWidth);
         redRect = new RectF(0, colorSelectWidth+5, colorSelectWidth, colorSelectWidth*2);
         greenRect = new RectF(0, (colorSelectWidth*2)+5, colorSelectWidth, colorSelectWidth*3);
-        blueRect =  new RectF(0, (colorSelectWidth*3)+5, colorSelectWidth, colorSelectWidth*4);
-        yellowRect = new RectF(0, (colorSelectWidth*4)+5, colorSelectWidth, colorSelectWidth*5);
+        yellowRect =  new RectF(0, (colorSelectWidth*3)+5, colorSelectWidth, colorSelectWidth*4);
+        blueRect = new RectF(0, (colorSelectWidth*4)+5, colorSelectWidth, colorSelectWidth*5);
         orangeRect = new RectF(0, (colorSelectWidth*5)+5, colorSelectWidth, colorSelectWidth*6);
         scrambleRect = new RectF(0, (colorSelectWidth*6)+5, colorSelectWidth, colorSelectWidth*7);
         clearRect = new RectF(colorSelectWidth+10, (colorSelectWidth*6)+5, colorSelectWidth*2+10, colorSelectWidth*7);
@@ -58,26 +67,34 @@ public class HUD {
                 screenWidth, screenHeight);
         topC = new RectF(colorSelectWidth+(faceWidth*4)+80, colorSelectWidth+30,
                 colorSelectWidth*2+(faceWidth*4)+80, colorSelectWidth*2+30);
+        topCBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.top_rotate_c);
         topCC = new RectF(colorSelectWidth*2+(faceWidth*4)+90, colorSelectWidth+30,
                 colorSelectWidth*3+(faceWidth*4)+90, colorSelectWidth*2+30);
+        topCCBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.top_rotate_cc);
         leftRotateUp = new RectF(colorSelectWidth+(faceWidth*4)+80, colorSelectWidth*2 +40,
                 colorSelectWidth*2+(faceWidth*4)+80, colorSelectWidth*3+40);
+        leftUpBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.left_up);
         leftRotateDown = new RectF(colorSelectWidth+(faceWidth*4)+80, colorSelectWidth*3+50,
                 colorSelectWidth*2+(faceWidth*4)+80, colorSelectWidth*4+50);
+        leftDownBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.left_down);
         rightRotateUp = new RectF(colorSelectWidth*2+faceWidth*4+90, colorSelectWidth*2+40,
                 colorSelectWidth*3+faceWidth*4+90, colorSelectWidth*3+40);
+        rightUpBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.right_up);
         rightRotateDown = new RectF(colorSelectWidth*2+faceWidth*4+90, colorSelectWidth*3+50,
                 colorSelectWidth*3+faceWidth*4+90, colorSelectWidth*4+50);
+        rightDownBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.right_down);
         bottomC = new RectF(colorSelectWidth+faceWidth*4+80, colorSelectWidth*4+60,
                 colorSelectWidth*2+faceWidth*4+80, colorSelectWidth*5+60);
+        bottomCBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.bottom_rotate_c);
         bottomCC = new RectF(colorSelectWidth*2+faceWidth*4+90, colorSelectWidth*4+60,
                 colorSelectWidth*3+faceWidth*4+90,colorSelectWidth*5+60);
+        bottomCCBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.bottom_rotate_cc);
 
         rectFS[0] = whiteRect;
         rectFS[1] = redRect;
         rectFS[2] = greenRect;
-        rectFS[3] = blueRect;
-        rectFS[4] = yellowRect;
+        rectFS[3] = yellowRect;
+        rectFS[4] = blueRect;
         rectFS[5] = orangeRect;
         rectFS[6] = scrambleRect;
         rectFS[7] = clearRect;
@@ -216,19 +233,29 @@ public class HUD {
             //Drawing clear
             paint.setColor(Color.MAGENTA);
             canvas.drawRect(clearRect, paint);
+
             //Draw start.
-            paint.setColor(Color.CYAN);
-            canvas.drawRect(startButton, paint);
+            //paint.setColor(Color.CYAN);
+            //canvas.drawRect(startButton, paint);
+
             //Draw buttons.
             paint.setColor(Color.BLACK);
             canvas.drawRect(topC, paint);
+            canvas.drawBitmap(topCBitmap, topC.left, topC.top, paint);
             canvas.drawRect(topCC, paint);
+            canvas.drawBitmap(topCCBitmap, topCC.left, topCC.top, paint);
             canvas.drawRect(leftRotateDown, paint);
+            canvas.drawBitmap(leftDownBitmap, leftRotateDown.left, leftRotateDown.top, paint);
             canvas.drawRect(leftRotateUp, paint);
+            canvas.drawBitmap(leftUpBitmap, leftRotateUp.left, leftRotateUp.top, paint);
             canvas.drawRect(rightRotateDown, paint);
+            canvas.drawBitmap(rightDownBitmap, rightRotateDown.left, rightRotateDown.top, paint);
             canvas.drawRect(rightRotateUp,paint);
+            canvas.drawBitmap(rightUpBitmap, rightRotateUp.left, rightRotateUp.top, paint);
             canvas.drawRect(bottomC, paint);
+            canvas.drawBitmap(bottomCBitmap, bottomC.left, bottomC.top, paint);
             canvas.drawRect(bottomCC, paint);
+            canvas.drawBitmap(bottomCCBitmap, bottomCC.left, bottomCC.top, paint);
         }
 
     }
@@ -241,6 +268,7 @@ public class HUD {
         float xCoord = event.getX();
         float yCoord = event.getY();
         int index = 0;
+        int rectFSMaxIndex = 8;
         for (int i = 0; i < rectFSMaxIndex; i++) {
             RectF current = rectFS[i];
             if (intersects(xCoord, yCoord, current)) {
@@ -251,11 +279,11 @@ public class HUD {
         return index;
     }
 
-    boolean intersects(float x, float y, RectF rectF) {
+    private boolean intersects(float x, float y, RectF rectF) {
         return x >= rectF.left && x <= rectF.right && y >= rectF.top && y <= rectF.bottom;
     }
 
-    public boolean getAllFilled() {
+    boolean getAllFilled() {
         return this.allFilled;
     }
 
@@ -263,16 +291,12 @@ public class HUD {
         allFilled = b;
     }
 
-    public boolean getStartPressed() {
+    boolean getStartPressed() {
         return this.startPressed;
     }
 
     void setStartPressed(boolean b) {
         startPressed = b;
-    }
-
-    public int getColorSelectWidth() {
-        return colorSelectWidth;
     }
 
     RectF getClearRect() {

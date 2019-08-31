@@ -25,6 +25,7 @@ public class RubixEngine extends SurfaceView implements Runnable {
 
     private HUD rubixHUD;
     private RubiksCube rubiksCube;
+    private SoundEngine rubiksSoundEngine;
 
     private long targetFPS = 30;
     private long nextFrameTime;
@@ -36,10 +37,11 @@ public class RubixEngine extends SurfaceView implements Runnable {
     public RubixEngine(Context context, DisplayMetrics displayMetrics) {
         super(context);
         rubixHUD = new HUD(context, displayMetrics);
-        rubiksCube = new RubiksCube(displayMetrics);
+        rubiksCube = new RubiksCube(context, displayMetrics);
         rubiksCube.setFaceTiles();
         rubixHolder = getHolder();
         rubixPaint = new Paint();
+        rubiksSoundEngine = new SoundEngine(context);
     }
 
     @Override
@@ -69,6 +71,7 @@ public class RubixEngine extends SurfaceView implements Runnable {
 
     public boolean onTouchEvent(MotionEvent event) {
         RectF pointTouched = new RectF(event.getX(), event.getY(), event.getX(), event.getY());
+
         if (event.getAction() == (MotionEvent.ACTION_UP & MotionEvent.ACTION_MASK)) {
             //Start button hasn't been pressed.
             if (!rubixHUD.getStartPressed()) {
@@ -77,24 +80,30 @@ public class RubixEngine extends SurfaceView implements Runnable {
                     Log.d("debug", "Color select touched");
                     //Selected a color.
                     if (rubixHUD.getSelectionTouched(event) >= 0 && rubixHUD.getSelectionTouched(event) < 6) {
+                        rubiksSoundEngine.playTurn(8);
                         currentColor = rubixHUD.getSelectionTouched(event);
-                        Log.d("debug", "" + currentColor);
+                        Log.d("debug", "Selection touched:" + "" + rubixHUD.getSelectionTouched(event));
                     }
                     //Selected scramble.
                     else {
-                        if(scrambleTimes != 6) {
-                            rubiksCube.scramble(scrambleTimes);
-                            incScrambleTimes();
-                            rubiksCube.printDebuggingText();
-                        } else {
-                            resetScrambleTimes();
-                            rubiksCube.scramble(scrambleTimes);
-                            incScrambleTimes();
+                        //Will execute if at least one of the faces hasn't been scrambled.
+                        if (!rubixHUD.getAllFilled()) {
+                            if (scrambleTimes != 6) {
+                                rubiksSoundEngine.playTurn(2);
+                                rubiksCube.scramble(scrambleTimes);
+                                incScrambleTimes();
+                                rubiksCube.printDebuggingText();
+                            } else {
+                                resetScrambleTimes();
+                                rubiksCube.scramble(scrambleTimes);
+                                incScrambleTimes();
+                            }
                         }
                     }
                 }
                 //Touched clear button.
                 else if (RectF.intersects(rubixHUD.getClearRect(), pointTouched)) {
+                    rubiksSoundEngine.playTurn(8);
                     rubiksCube.clear();
                     rubixHUD.setAllFilled(false);
                     rubiksCube.setAllFilled(false);
@@ -102,6 +111,7 @@ public class RubixEngine extends SurfaceView implements Runnable {
                 }
                 //Touched start button.
                 else if (RectF.intersects(rubixHUD.getStartButton(), pointTouched) && rubixHUD.getAllFilled()) {
+                    rubiksSoundEngine.playTurn(8);
                     rubixHUD.setStartPressed(true);
                     Log.d("debug", "start pressed: " + "" + rubixHUD.getStartPressed());
                 }
@@ -122,6 +132,7 @@ public class RubixEngine extends SurfaceView implements Runnable {
                     Log.d("debug", "Color select touched");
                     //Selected a color.
                     if (rubixHUD.getSelectionTouched(event) >= 0 && rubixHUD.getSelectionTouched(event) < 6) {
+                        rubiksSoundEngine.playTurn(8);
                         currentColor = rubixHUD.getSelectionTouched(event);
                         Log.d("debug", "" + currentColor);
                     }
@@ -129,6 +140,7 @@ public class RubixEngine extends SurfaceView implements Runnable {
 
                 //Touched clear button.
                 else if (RectF.intersects(rubixHUD.getClearRect(), pointTouched)) {
+                    rubiksSoundEngine.playTurn(8);
                     rubiksCube.clear();
                     rubixHUD.setAllFilled(false);
                     rubixHUD.setStartPressed(false);
@@ -137,34 +149,42 @@ public class RubixEngine extends SurfaceView implements Runnable {
                 //TOUCHING MOVEMENT BUTTONS
                 //Touched top clockwise
                 else if (RectF.intersects(rubixHUD.getTopC(), pointTouched)) {
+                    rubiksSoundEngine.playTurn(1);
                     rubiksCube.getFaces().get(currentColor).rotateTopC(currentColor);
                 }
                 //Touched top counter-clockwise
                 else if (RectF.intersects(rubixHUD.getTopCC(), pointTouched)) {
+                    rubiksSoundEngine.playTurn(2);
                     rubiksCube.getFaces().get(currentColor).rotateTopCC(currentColor);
                 }
                 //Touched left rotate down
                 else if (RectF.intersects(rubixHUD.getLeftRotateDown(), pointTouched)) {
+                    rubiksSoundEngine.playTurn(3);
                     rubiksCube.getFaces().get(currentColor).rotateLeftDown(currentColor);
                 }
                 //Touched left rotate up
                 else if (RectF.intersects(rubixHUD.getLeftRotateUp(), pointTouched)) {
+                    rubiksSoundEngine.playTurn(4);
                     rubiksCube.getFaces().get(currentColor).rotateLeftUp(currentColor);
                 }
                 //Touched right rotate down.
                 else if (RectF.intersects(rubixHUD.getRightRotateDown(), pointTouched)) {
+                    rubiksSoundEngine.playTurn(5);
                     rubiksCube.getFaces().get(currentColor).rotateRightDown(currentColor);
                 }
                 //Touched right rotate up.
                 else if (RectF.intersects(rubixHUD.getRightRotateUp(), pointTouched)) {
+                    rubiksSoundEngine.playTurn(6);
                     rubiksCube.getFaces().get(currentColor).rotateRightUp(currentColor);
                 }
                 //Touched bottom clockwise.
                 else if (RectF.intersects(rubixHUD.getBottomC(), pointTouched)) {
+                    rubiksSoundEngine.playTurn(7);
                     rubiksCube.getFaces().get(currentColor).rotateBottomC(currentColor);
                 }
                 //Touched bottom counter-clockwise.
                 else if (RectF.intersects(rubixHUD.getBottomCC(), pointTouched)) {
+                    rubiksSoundEngine.playTurn(2 );
                     rubiksCube.getFaces().get(currentColor).rotateBottomCC(currentColor);
                 }
             }

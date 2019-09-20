@@ -1,0 +1,13 @@
+let listBeingDeleted = window.todo.model.listToEdit;
+        window.todo.model.removeList(listBeingDeleted);
+        window.todo.view.goHome();
+        window.alert("processDeleteList()");
+        
+        
+        let listBeingDeleted = window.todo.model.listToEdit;
+        if(window.confirm("Delete list? \n\nAre you sure you want to delete this list?")) {
+            window.todo.model.removeList(listBeingDeleted);
+            window.todo.model.goHome();
+            
+            
+                    this.registerEventHandler(TodoGUIId.LIST_TRASH, TodoHTML.CLICK, this[TodoCallback.PROCESS_DELETE_LIST]);
